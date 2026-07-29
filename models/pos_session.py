@@ -8,9 +8,9 @@ class PosSession(models.Model):
 
     def _loader_params_product_product(self):
         result = super()._loader_params_product_product()
-        # Aseguramos cargar el campo pos_config_ids en la carga de datos de pos.session
         if 'search_params' in result and 'fields' in result['search_params']:
             if 'pos_config_ids' not in result['search_params']['fields']:
+                # El campo pos_config_ids proviene de product_tmpl_id
                 result['search_params']['fields'].append('pos_config_ids')
         return result
 
@@ -25,9 +25,10 @@ class PosSession(models.Model):
         
         custom_domain = [
             '|',
-            ('pos_config_ids', '=', False),
-            ('pos_config_ids', 'in', [pos_config_id])
+            ('product_tmpl_id.pos_config_ids', '=', False),
+            ('product_tmpl_id.pos_config_ids', 'in', [pos_config_id])
         ]
         
         params['search_params']['domain'] = domain + custom_domain
         return super()._get_pos_ui_product_product(params)
+
