@@ -4,7 +4,7 @@
     'version': '18.0.1.0.0',
     'category': 'Point of Sale',
     'summary': 'Delimita la disponibilidad de productos a puntos de venta específicos según la compañía.',
-    'author': 'TQ',
+    'author': 'Mario Roberto Gomez',
     'depends': [
         'point_of_sale',
         'product',
