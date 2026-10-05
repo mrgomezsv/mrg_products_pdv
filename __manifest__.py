@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 {
     'name': 'Restricción de Productos por PDV',
     'version': '20.0.1.0.0',
