@@ -1,34 +1,8 @@
 # -*- coding: utf-8 -*-
-
-from odoo import models
-
-
-class PosSession(models.Model):
-    _inherit = 'pos.session'
-
-    def _loader_params_product_product(self):
-        result = super()._loader_params_product_product()
-        if 'search_params' in result and 'fields' in result['search_params']:
-            if 'pos_config_ids' not in result['search_params']['fields']:
-                # El campo pos_config_ids proviene de product_tmpl_id
-                result['search_params']['fields'].append('pos_config_ids')
-        return result
-
-    def _get_pos_ui_product_product(self, params):
-        """
-        Filtra los productos a cargar en el POS frontend de modo que solo se envíen:
-        1. Productos sin PDV específico seleccionado (disponibles para todos).
-        2. Productos asignados explícitamente al PDV (pos.config) actual de esta sesión.
-        """
-        domain = params.get('search_params', {}).get('domain', [])
-        pos_config_id = self.config_id.id
-        
-        custom_domain = [
-            '|',
-            ('product_tmpl_id.pos_config_ids', '=', False),
-            ('product_tmpl_id.pos_config_ids', 'in', [pos_config_id])
-        ]
-        
-        params['search_params']['domain'] = domain + custom_domain
-        return super()._get_pos_ui_product_product(params)
-
+# Archivo obsoleto: ya no se importa (ver models/__init__.py).
+#
+# En Odoo 17 se filtraban los productos del POS con
+# _loader_params_product_product / _get_pos_ui_product_product. Esos métodos
+# no existen en Odoo 20 y el filtro ahora vive en
+# product.template._load_pos_data_domain (models/product_template.py).
+# Se puede borrar este archivo.

@@ -63,28 +63,11 @@ class TestMrgProductsPdv(TransactionCase):
         self.assertNotIn(self.pos_config_b1, available_pdvs)
 
     def test_02_pos_session_product_filtering(self):
-        """ Verificar la lógica de filtrado de productos en la sesión del POS """
-        # Crear una sesión para PDV A1
-        session_a1 = self.env['pos.session'].create({
-            'config_id': self.pos_config_a1.id,
-            'user_id': self.env.user.id,
-        })
-
-        # Ejecutar el método herederado para obtener el dominio de productos
-        params = {'search_params': {'domain': [('available_in_pos', '=', True)]}}
-        session_a1._get_pos_ui_product_product(params)
-
-        res_domain = params['search_params']['domain']
-
-        # Buscar variantes resultantes aplicando el dominio generado por el módulo
-        loaded_products = self.env['product.product'].search(res_domain)
-
-        # Variantes de nuestros productos creados
-        variant_a1 = self.product_restricted_a1.product_variant_id
-        variant_a2 = self.product_restricted_a2.product_variant_id
-        variant_global = self.product_global_a.product_variant_id
+        """ Verificar el dominio de productos que se cargan en el POS (Odoo 20) """
+        domain = self.env['product.template']._load_pos_data_domain({'pos.config': self.pos_config_a1})
+        loaded_templates = self.env['product.template'].with_company(self.company_a).search(domain)
 
         # Validar inclusión/exclusión de productos en PDV A1
-        self.assertIn(variant_a1, loaded_products, "El producto A1 debe cargarse en la sesión del PDV A1")
-        self.assertIn(variant_global, loaded_products, "El producto Global debe cargarse en cualquier PDV de su compañía")
-        self.assertNotIn(variant_a2, loaded_products, "El producto A2 NO debe cargarse en la sesión del PDV A1")
+        self.assertIn(self.product_restricted_a1, loaded_templates, "El producto A1 debe cargarse en el PDV A1")
+        self.assertIn(self.product_global_a, loaded_templates, "El producto Global debe cargarse en cualquier PDV de su compañía")
+        self.assertNotIn(self.product_restricted_a2, loaded_templates, "El producto A2 NO debe cargarse en el PDV A1")
